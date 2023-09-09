@@ -1,13 +1,11 @@
 package main.java.br.com.alura.hotel.views;
 
 import java.awt.EventQueue;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import main.java.br.com.alura.hotel.dao.UsuarioDao;
 import main.java.br.com.alura.hotel.modelo.Usuario;
 import main.java.br.com.alura.hotel.util.JPAUtil;
+import main.java.br.com.alura.hotel.util.View;
 
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -15,28 +13,25 @@ import javax.swing.JOptionPane;
 import javax.persistence.EntityManager;
 import javax.swing.ImageIcon;
 import javax.swing.JTextField;
-import javax.swing.JSeparator;
-import java.awt.SystemColor;
-import java.awt.Font;
+import java.awt.Panel;
+
 import javax.swing.JPasswordField;
-import javax.swing.SwingConstants;
+import keeptoo.KGradientPanel;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 
-public class CadastroUsuario extends JFrame {
+public class CadastroUsuario extends View {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private final int WIDTH = 700;
+	private final int HEIGHT = 400;
+
 	private JPanel contentPane;
+	private JPanel header;
+
 	private JTextField txtUsuario;
 	private JPasswordField txtSenha;
 	private JPasswordField txtConfirmarSenha;
-	int xMouse, yMouse;
-	private JLabel labelAtras;
-	private JLabel labelExit;
 
 	/**
 	 * Launch the application.
@@ -58,309 +53,149 @@ public class CadastroUsuario extends JFrame {
 	 * Create the frame.
 	 */
 	public CadastroUsuario() {
-		setResizable(false);
-		setUndecorated(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 788, 628);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
-		setLocationRelativeTo(null);
 
-		// Fundo Branco
+		/**
+		 * 
+		 * ELEMENTOS
+		 * 
+		 */
 
-		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 788, 628);
-		panel.setBackground(Color.WHITE);
-		contentPane.add(panel);
-		panel.setLayout(null);
+		// Constrói a Janela
+		contentPane = window(WIDTH, HEIGHT);
 
-		// Coluna Azul
+		// Constói o header
+		header = header(WIDTH, true, new Login(), true);
+		contentPane.add(header);
 
-		JPanel panel_1 = new JPanel();
-		panel_1.setBackground(new Color(12, 138, 199));
-		panel_1.setBounds(484, 0, 304, 628);
-		panel.add(panel_1);
-		panel_1.setLayout(null);
+		// Footer
+		JPanel footer = footer(HEIGHT, WIDTH, false);
+		contentPane.add(footer);
 
-		// Imagem Hotel
+		// Fundo Gradiente
+		KGradientPanel bg = quadroGradiente(0, 0, WIDTH / 2, HEIGHT);
+		contentPane.add(bg);
 
-		JLabel imgHotel = new JLabel("");
-		imgHotel.setBounds(0, 0, 304, 538);
-		panel_1.add(imgHotel);
-		imgHotel.setIcon( new ImageIcon(Login.class.getResource("/main/java/br/com/alura/hotel/res/img-hotel-login-.png")));
+		// Quadro branco
+		Panel quadro = quadroSolido(WIDTH / 2, 36, WIDTH, HEIGHT - 36 * 2, Color.WHITE);
+		contentPane.add(quadro);
 
-		// Header 
+		// Título
+		bg.add(labelTitulo(WIDTH / 4 - 90, HEIGHT / 3 - 36, 180, 26, "CADASTRAR"));
+		bg.add(labelTitulo(WIDTH / 4 - 114, HEIGHT / 3, 227, 26, "NOVO USUÁRIO"));
 
-		JPanel header = new JPanel();
-		header.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-				headerMouseDragged(e);
-
-			}
-		});
-		header.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				headerMousePressed(e);
-			}
-		});
-		header.setBackground(SystemColor.window);
-		header.setBounds(0, 0, 784, 36);
-		panel.add(header);
-		header.setLayout(null);
-
-		// Botão Voltar "<"
-
-		JPanel btnAtras = new JPanel();
-		btnAtras.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				Login login = new Login();
-				login.setVisible(true);
-				dispose();				
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnAtras.setBackground(new Color(12, 138, 199));
-				labelAtras.setForeground(Color.white);
-			}			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				 btnAtras.setBackground(Color.white);
-			     labelAtras.setForeground(Color.black);
-			}
-		});
-		btnAtras.setLayout(null);
-		btnAtras.setBackground(Color.WHITE);
-		btnAtras.setBounds(0, 0, 53, 36);
-		header.add(btnAtras);
-		
-		labelAtras = new JLabel("<");
-		labelAtras.setHorizontalAlignment(SwingConstants.CENTER);
-		labelAtras.setFont(new Font("Roboto", Font.PLAIN, 23));
-		labelAtras.setBounds(0, 0, 53, 36);
-		btnAtras.add(labelAtras);
-
-		// Botão Fechar "X"
-
-		JPanel btnexit = new JPanel();
-		btnexit.setBounds(251, 0, 53, 36);
-		panel_1.add(btnexit);
-		btnexit.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.exit(0);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnexit.setBackground(Color.red);
-				labelExit.setForeground(Color.white);
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnexit.setBackground(new Color(12, 138, 199));
-				labelExit.setForeground(Color.white);
-			}
-		});
-		btnexit.setBackground(new Color(12, 138, 199));
-		btnexit.setLayout(null);
-		btnexit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-		labelExit = new JLabel("X");
-		labelExit.setBounds(0, 0, 53, 36);
-		btnexit.add(labelExit);
-		labelExit.setForeground(SystemColor.text);
-		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
-		labelExit.setHorizontalAlignment(SwingConstants.CENTER);
-
-		// Logo
-
+		// IMG - LOGO HOTEL
 		JLabel logo = new JLabel("");
-		logo.setHorizontalAlignment(SwingConstants.CENTER);
-		logo.setIcon(new ImageIcon(Login.class.getResource("/main/java/br/com/alura/hotel/res/lOGO-50PX.png")));
-		logo.setBounds(65, 65, 48, 59);
-		panel.add(logo);
+		logo.setBounds((WIDTH / 4) - 50, (HEIGHT / 2) - 25, 100, 100);
+		logo.setIcon(new ImageIcon(CadastroUsuario.class.getResource("/main/java/br/com/alura/hotel/res/aH-100px.png")));
+		bg.add(logo);
 
-		// Título da janela
-
-		JLabel labelTitulo = new JLabel("CADASTRAR NOVO USUÁRIO");
-		labelTitulo.setForeground(SystemColor.textHighlight);
-		labelTitulo.setFont(new Font("Roboto Black", Font.PLAIN, 26));
-		labelTitulo.setBounds(65, 150, 348, 26);
-		panel.add(labelTitulo);
-
-		// Label Usuário
-
-		JLabel LabelUsuario = new JLabel("USUÁRIO");
-		LabelUsuario.setForeground(SystemColor.textInactiveText);
-		LabelUsuario.setFont(new Font("Roboto Black", Font.PLAIN, 20));
-		LabelUsuario.setBounds(65, 215, 107, 26);
-		panel.add(LabelUsuario);
+		// Label Campo Usuário
+		quadro.add(label(25, 10, 324, 26, Color.GRAY, "USUÁRIO"));
 
 		// Campo Usuário
+		txtUsuario = campoTxt(25, 40, WIDTH / 2 - 50, 40, true);
+		quadro.add(txtUsuario);
 
-		txtUsuario = new JTextField();
+		// Label Campo Senha
+		quadro.add(label(25, 90, 324, 26, Color.GRAY, "SENHA"));
+
+		// Campo Senha
+		txtSenha = campoPass(25, 120, WIDTH / 2 - 50, 40, true);
+		quadro.add(txtSenha);
+
+		// Label Campo Confirmar Senha
+		quadro.add(label(25, 170, 324, 26, Color.GRAY, "CONFIRMAR SENHA"));
+
+		// Campo Confirmar Senha
+		txtConfirmarSenha = campoPass(25, 200, WIDTH / 2 - 50, 40, true);
+		quadro.add(txtConfirmarSenha);
+
+		// Botão "CADASTRAR"
+		JPanel btnCadastrar = botao(25, 265, "CADASTRAR");
+		quadro.add(btnCadastrar);
+
+		// Botão "CANCELAR"
+		JPanel btnCancelar = botao(194, 265, "CANCELAR");
+		quadro.add(btnCancelar);
+
+		/**
+		 * 
+		 * LÓGICA
+		 * 
+		 */
+
+		// Lógica Campo Usuário
+		txtUsuario.setForeground(Color.LIGHT_GRAY);
+		txtUsuario.setText("Digite seu nome de usuário");
 		txtUsuario.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (txtUsuario.getText().equals("Digite seu nome de usuário")) {
 					txtUsuario.setText("");
-					txtUsuario.setForeground(Color.black);
+					txtUsuario.setForeground(Color.DARK_GRAY);
 				}
-				if (String.valueOf(txtSenha.getPassword()).isEmpty()) {
-					txtSenha.setForeground(Color.gray);
+				if (String.valueOf(txtSenha.getPassword()).isEmpty()
+						|| String.valueOf(txtSenha.getPassword()).equals("********")) {
+					txtSenha.setForeground(Color.LIGHT_GRAY);
 				}
-				if (String.valueOf(txtConfirmarSenha.getPassword()).isEmpty()) {
-					txtConfirmarSenha.setForeground(Color.gray);
+				if (String.valueOf(txtConfirmarSenha.getPassword()).isEmpty()
+						|| String.valueOf(txtConfirmarSenha.getPassword()).equals("********")) {
+					txtConfirmarSenha.setForeground(Color.LIGHT_GRAY);
 				}
 			}
 		});
-		txtUsuario.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtUsuario.setText("Digite seu nome de usuário");
-		txtUsuario.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-		txtUsuario.setForeground(SystemColor.activeCaptionBorder);
-		txtUsuario.setBounds(65, 252, 324, 32);
-		panel.add(txtUsuario);
-		txtUsuario.setColumns(10);
 
-		// Barra azul Usuário
-
-		JSeparator separator = new JSeparator();
-		separator.setBackground(new Color(0, 120, 215));
-		separator.setBounds(65, 292, 324, 2);
-		panel.add(separator);
-
-		// Label Senha
-
-		JLabel lblSenha = new JLabel("SENHA");
-		lblSenha.setForeground(SystemColor.textInactiveText);
-		lblSenha.setFont(new Font("Roboto Black", Font.PLAIN, 20));
-		lblSenha.setBounds(65, 316, 140, 26);
-		panel.add(lblSenha);
-
-		// Campo Senha
-
-		txtSenha = new JPasswordField();
+		// Lógica Campo Senha
+		txtSenha.setForeground(Color.LIGHT_GRAY);
 		txtSenha.setText("********");
 		txtSenha.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (String.valueOf(txtSenha.getPassword()).equals("********")) {
 					txtSenha.setText("");
-					txtSenha.setForeground(Color.black);
+					txtSenha.setForeground(Color.DARK_GRAY);
 				}
 				if (txtUsuario.getText().isEmpty()) {
-					txtUsuario.setForeground(Color.gray);
+					txtUsuario.setForeground(Color.LIGHT_GRAY);
 				}
-				if (String.valueOf(txtConfirmarSenha.getPassword()).isEmpty()) {
-					txtConfirmarSenha.setForeground(Color.gray);
+				if (String.valueOf(txtConfirmarSenha.getPassword()).isEmpty()
+						|| String.valueOf(txtConfirmarSenha.getPassword()).equals("********")) {
+					txtConfirmarSenha.setForeground(Color.LIGHT_GRAY);
 				}
 			}
 		});
-		txtSenha.setForeground(SystemColor.activeCaptionBorder);
-		txtSenha.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtSenha.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-		txtSenha.setBounds(65, 353, 324, 32);
-		panel.add(txtSenha);
 
-		// Barra azul Senha
-
-		JSeparator separator_1 = new JSeparator();
-		separator_1.setBackground(SystemColor.textHighlight);
-		separator_1.setBounds(65, 393, 324, 2);
-		panel.add(separator_1);
-
-		// Label Confirmar Senha
-
-		JLabel lblConfirmarSenha = new JLabel("CONFIRMAR SENHA");
-		lblConfirmarSenha.setForeground(SystemColor.textInactiveText);
-		lblConfirmarSenha.setFont(new Font("Roboto Black", Font.PLAIN, 20));
-		lblConfirmarSenha.setBounds(65, 417, 187, 26);
-		panel.add(lblConfirmarSenha);
-
-		// Campo Confirmar Senha
-
-		txtConfirmarSenha = new JPasswordField();
+		// Lógica Campo Confirmar Senha
+		txtConfirmarSenha.setForeground(Color.LIGHT_GRAY);
 		txtConfirmarSenha.setText("********");
 		txtConfirmarSenha.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (String.valueOf(txtConfirmarSenha.getPassword()).equals("********")) {
 					txtConfirmarSenha.setText("");
-					txtConfirmarSenha.setForeground(Color.black);
+					txtConfirmarSenha.setForeground(Color.DARK_GRAY);
 				}
 				if (txtUsuario.getText().isEmpty()) {
-					txtUsuario.setForeground(Color.gray);
+					txtUsuario.setForeground(Color.LIGHT_GRAY);
 				}
-				if (String.valueOf(txtSenha.getPassword()).isEmpty()) {
-					txtSenha.setForeground(Color.gray);
+				if (String.valueOf(txtSenha.getPassword()).isEmpty()
+						|| String.valueOf(txtSenha.getPassword()).equals("********")) {
+					txtSenha.setForeground(Color.LIGHT_GRAY);
 				}
 			}
 		});
-		txtConfirmarSenha.setForeground(SystemColor.activeCaptionBorder);
-		txtConfirmarSenha.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtConfirmarSenha.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-		txtConfirmarSenha.setBounds(65, 454, 324, 32);
-		panel.add(txtConfirmarSenha);
 
-		// Barra azul Confirmar Senha
-
-		JSeparator separator_2 = new JSeparator();
-		separator_2.setBackground(SystemColor.textHighlight);
-		separator_2.setBounds(65, 494, 324, 2);
-		panel.add(separator_2);
-
-		// Botão "CADASTRAR"
-
-		JPanel btnCadastrar = new JPanel();
+		// Lógica Botão "CADASTRAR"
 		btnCadastrar.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnCadastrar.setBackground(new Color(0, 156, 223));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnCadastrar.setBackground(SystemColor.textHighlight);
-			}
-
-			@Override
 			public void mouseClicked(MouseEvent e) {
-				CadastrarUsuario();
+				CadastrarUsuario(txtUsuario.getText(), new String(txtSenha.getPassword()),
+						new String(txtConfirmarSenha.getPassword()));
 			}
 		});
-		btnCadastrar.setBackground(SystemColor.textHighlight);
-		btnCadastrar.setBounds(65, 532, 157, 44);
-		panel.add(btnCadastrar);
-		btnCadastrar.setLayout(null);
-		btnCadastrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-		JLabel lblCadastrar = new JLabel("CADASTRAR");
-		lblCadastrar.setBounds(0, 0, 157, 44);
-		btnCadastrar.add(lblCadastrar);
-		lblCadastrar.setForeground(SystemColor.controlLtHighlight);
-		lblCadastrar.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCadastrar.setFont(new Font("Roboto", Font.PLAIN, 18));
-
-		// Botão "CANCELAR"
-
-		JPanel btnCancelar = new JPanel();
+		// Lógica Botão "CANCELAR"
 		btnCancelar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnCancelar.setBackground(new Color(0, 156, 223));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnCancelar.setBackground(SystemColor.textHighlight);
-			}
-
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				Login login = new Login();
@@ -368,69 +203,67 @@ public class CadastroUsuario extends JFrame {
 				dispose();
 			}
 		});
-		btnCancelar.setBackground(SystemColor.textHighlight);
-		btnCancelar.setBounds(244, 532, 145, 44);
-		panel.add(btnCancelar);
-		btnCancelar.setLayout(null);
-		btnCancelar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
-		JLabel lblCancelar = new JLabel("CANCELAR");
-		lblCancelar.setBounds(0, 0, 145, 44);
-		btnCancelar.add(lblCancelar);
-		lblCancelar.setForeground(SystemColor.controlLtHighlight);
-		lblCancelar.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCancelar.setFont(new Font("Roboto", Font.PLAIN, 18));
-
 	}
 
-	private void CadastrarUsuario() {
-		String usuario = txtUsuario.getText();
-		String senha = new String(txtSenha.getPassword());
-		String confirmarSenha = new String(txtConfirmarSenha.getPassword());
+	/**
+	 * 
+	 * MÉTODOS
+	 * 
+	 */
 
-		// System.out.println(usuario);
-		// System.out.println(senha);
-		// System.out.println(confirmarSenha);
+	private void CadastrarUsuario(String usuario, String senha, String confirmarSenha) {
 
-		if (usuario.isEmpty() || usuario.equalsIgnoreCase("Digite seu nome de usuário") ||senha.isEmpty() || confirmarSenha.isEmpty()) {
+		// Verifica o campo do usuário
+		if (usuario.isEmpty() || usuario.equalsIgnoreCase("Digite seu nome de usuário")) {
+			JOptionPane.showMessageDialog(null, "Todos os campos são obrigatórios.");
 			txtUsuario.setText("");
 			txtSenha.setText("");
 			txtConfirmarSenha.setText("");
-
-			JOptionPane.showMessageDialog(null, "Todos os campos são obrigatórios.");
-		} else {
-			if (senha.equals(confirmarSenha)) {
-				EntityManager em = JPAUtil.getEntityManager();
-				UsuarioDao usuarioDao = new UsuarioDao(em);
-				
-				em.getTransaction().begin();
-				usuarioDao.cadastrar(new Usuario(usuario, senha));
-				em.getTransaction().commit();
-				em.close();
-
-				JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso.");
-
-				Login login = new Login();
-				login.setVisible(true);
-				dispose();
-			} else {
-				txtSenha.setText("");
-				txtConfirmarSenha.setText("");
-
-				JOptionPane.showMessageDialog(null, "As senhas não são iguais, tente novamente.");
-			}
+			throw new IllegalArgumentException("> Campo do usuário vazio.");
 		}
-	}
 
-	// Código que permite movimentar a janela pela tela seguindo a posição de "x" e "y"
-	private void headerMousePressed(java.awt.event.MouseEvent evt) {
-		xMouse = evt.getX();
-		yMouse = evt.getY();
-	}
+		// Verifica o campo da senha
 
-	private void headerMouseDragged(java.awt.event.MouseEvent evt) {
-		int x = evt.getXOnScreen();
-		int y = evt.getYOnScreen();
-		this.setLocation(x - xMouse, y - yMouse);
+		if (senha.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Todos os campos são obrigatórios.");
+			txtUsuario.setText("");
+			txtSenha.setText("");
+			txtConfirmarSenha.setText("");
+			throw new IllegalArgumentException("> Campo da senha vazio.");
+		}
+
+		// Verifica o campo de confirmar senha
+
+		if (confirmarSenha.isEmpty()) {
+			JOptionPane.showMessageDialog(null, "Todos os campos são obrigatórios.");
+			txtUsuario.setText("");
+			txtSenha.setText("");
+			txtConfirmarSenha.setText("");
+			throw new IllegalArgumentException("> Campo de confirmar senha vazio.");
+		}
+
+		// Verifica se as senhas são iguais
+
+		if (senha.equals(confirmarSenha)) {
+			EntityManager em = JPAUtil.getEntityManager();
+			UsuarioDao usuarioDao = new UsuarioDao(em);
+
+			// Permanencia dos dados
+			em.getTransaction().begin();
+			usuarioDao.cadastrar(new Usuario(usuario, senha));
+			em.getTransaction().commit();
+			em.close();
+
+			JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso.");
+
+			Login login = new Login();
+			login.setVisible(true);
+			dispose();
+		} else {
+			JOptionPane.showMessageDialog(null, "As senhas não são iguais.");
+			txtSenha.setText("");
+			txtConfirmarSenha.setText("");
+			throw new IllegalArgumentException("> Senhas diferentes.");
+		}
 	}
 }

@@ -31,7 +31,7 @@ public class TesteDeCadastro {
 
         //Recuperando lista de Forma de Pagamento
         List<Pagamento> listaPagamento = pagamentoDao.buscarTodos();
-        listaPagamento.get(0).setPagamento("Cartão de crédito"); //Atualização
+        // listaPagamento.get(0).setPagamento("Cartão de crédito"); //Atualização
         listaPagamento.stream().forEach(lista -> System.out.println(lista.toString()));
         
         //Cadastro Reserva

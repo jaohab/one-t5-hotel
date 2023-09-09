@@ -1,6 +1,5 @@
 package main.java.br.com.alura.hotel.modelo;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -22,7 +21,7 @@ public class Usuario {
     private String sobrenome;
     private String email;
     private Date dateEHoraDoCadastro = new Date();
-    private LocalDate ultimoAcesso;
+    private Date ultimoAcesso;
 
     public Usuario() {
     }
@@ -88,7 +87,11 @@ public class Usuario {
         return dateEHoraDoCadastro;
     }
 
-    public LocalDate getUltimoAcesso() {
+    public void setUltimoAcesso(Date ultimoAcesso) {
+        this.ultimoAcesso = ultimoAcesso;
+    }
+
+    public Date getUltimoAcesso() {
         return ultimoAcesso;
     }
 

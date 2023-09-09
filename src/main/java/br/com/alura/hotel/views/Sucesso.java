@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 
-@SuppressWarnings("serial")
 public class Sucesso extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
@@ -38,6 +37,7 @@ public class Sucesso extends JDialog {
 	 * Create the dialog.
 	 */
 	public Sucesso() {
+
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Sucesso.class.getResource("/main/java/br/com/alura/hotel/res/aH-40px.png")));
 		setBounds(100, 100, 394, 226);
 		getContentPane().setLayout(new BorderLayout());
@@ -45,6 +45,7 @@ public class Sucesso extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		setLocationRelativeTo(null);
+
 		contentPanel.setLayout(null);
 		{
 			JLabel lblNewLabel = new JLabel("");
@@ -77,9 +78,9 @@ public class Sucesso extends JDialog {
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
+				// JButton cancelButton = new JButton("Cancel");
+				// cancelButton.setActionCommand("Cancel");
+				// buttonPane.add(cancelButton);
 			}
 		}
 	}
