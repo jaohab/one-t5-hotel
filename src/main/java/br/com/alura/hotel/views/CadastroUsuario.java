@@ -115,7 +115,7 @@ public class CadastroUsuario extends View {
 		quadro.add(btnCadastrar);
 
 		// Botão "CANCELAR"
-		JPanel btnCancelar = botao(194, 265, "CANCELAR");
+		JPanel btnCancelar = botao(194 - 3, 265, "CANCELAR");
 		quadro.add(btnCancelar);
 
 		/**

@@ -3,18 +3,22 @@ package main.java.br.com.alura.hotel.views;
 import java.awt.EventQueue;
 import javax.swing.JPanel;
 
+import main.java.br.com.alura.hotel.util.CustomFonts;
 import main.java.br.com.alura.hotel.util.View;
 
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import java.awt.Font;
+import java.awt.FontFormatException;
+
 import javax.swing.SwingConstants;
 
 import keeptoo.KGradientPanel;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 public class MenuPrincipal extends View {
 
@@ -69,10 +73,16 @@ public class MenuPrincipal extends View {
 		bg.add(logo);
 
 		// TXT - LOGIN
+		try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Light"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
 		JLabel lblTitulo = new JLabel("LOGIN");
 		lblTitulo.setFont(new Font("Roboto Light", Font.PLAIN, 24));
 		lblTitulo.setForeground(Color.DARK_GRAY);
-		lblTitulo.setBounds(((WIDTH/4)*3)-34, HEIGHT/2-45, 68, 22);
+		lblTitulo.setBounds(((WIDTH/4)*3)-35, HEIGHT/2-45, 68, 22);
 		bg.add(lblTitulo);
 
 		// BTN - IMG - LOGIN

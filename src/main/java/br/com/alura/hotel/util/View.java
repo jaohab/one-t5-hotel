@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -20,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,6 +56,7 @@ public abstract class View extends JFrame {
     /**
      * Constrói a janela
      */
+
     public JPanel window(int width, int height) {
         setIconImage(Toolkit.getDefaultToolkit()
                 .getImage(View.class.getResource("/main/java/br/com/alura/hotel/res/aH-40px.png")));
@@ -74,6 +77,11 @@ public abstract class View extends JFrame {
      * Constói o header
      */
     public JPanel header(int width, boolean mostrarVoltar, View janelaParaVoltar, boolean mostrarFechar) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
 
         // Header
         JPanel header = new JPanel();
@@ -176,6 +184,12 @@ public abstract class View extends JFrame {
      * Constrói o Footer
      */
     public JPanel footer(int y, int width, boolean mostrarInfo) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         JPanel footer = new JPanel();
         footer.setBackground(Color.DARK_GRAY);
         footer.setBounds(0, y - 36, width, 36);
@@ -231,6 +245,12 @@ public abstract class View extends JFrame {
      * Constói Label Titulo
      */ 
     public JLabel labelTitulo(int x, int y, int width, int height, String msg) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Light"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         JLabel label = new JLabel(msg);
         label.setFont(new Font("Roboto LIGHT", Font.PLAIN, 32));
         label.setForeground(Color.DARK_GRAY);
@@ -242,6 +262,12 @@ public abstract class View extends JFrame {
      * Constói Label
      */ 
     public JLabel label(int x, int y, int width, int height, Color color, String msg) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Black"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         JLabel label = new JLabel(msg);
         label.setFont(new Font("Roboto Black", Font.PLAIN, 16));
         label.setForeground(color);
@@ -253,6 +279,12 @@ public abstract class View extends JFrame {
      * Constói Texto
      */ 
     public JLabel texto(int x, int y, int width, int height, Color color, int fontStyle, int fontSize, String msg) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         JLabel label = new JLabel(msg);
         label.setFont(new Font("Roboto", fontStyle, fontSize));
         label.setForeground(color);
@@ -264,6 +296,12 @@ public abstract class View extends JFrame {
      * Constrói Campo de Texto
      */ 
     public JTextField campoTxt(int x, int y, int width, int height, boolean editavel) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         JTextField field = new JTextField();
         field.setFont(new Font("Roboto", Font.PLAIN, 14));
         // field.setBorder(javax.swing.BorderFactory.createEmptyBorder());
@@ -277,6 +315,12 @@ public abstract class View extends JFrame {
      * Constrói Campo de Senha
      */
     public JPasswordField campoPass(int x, int y, int width, int height, boolean editavel) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         JPasswordField field = new JPasswordField();
         field.setFont(new Font("Roboto", Font.PLAIN, 14));
         // field.setBorder(javax.swing.BorderFactory.createEmptyBorder());
@@ -291,6 +335,12 @@ public abstract class View extends JFrame {
      * @throws ParseException
      */
     public JFormattedTextField campoTelefone(int x, int y, int width, int height, boolean editavel) throws ParseException {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         MaskFormatter maskFormatter = new MaskFormatter("(###) # ####-####");
 		JFormattedTextField field = new JFormattedTextField(maskFormatter);
 
@@ -305,6 +355,12 @@ public abstract class View extends JFrame {
      * Constrói Campo ComboBox
      */
     public JComboBox<String> campoCombo(int x, int y, int width, int height) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         JComboBox<String> field = new JComboBox<>();
         field.setFont(new Font("Roboto", Font.PLAIN, 14));
         field.setBounds(x, y, width, height);
@@ -339,6 +395,12 @@ public abstract class View extends JFrame {
      * Constrói Campo DateChooser
      */
     public JDateChooser campoDateChooser(int x, int y, int width, int height) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
         Font font = new Font("Roboto", Font.PLAIN, 14);
         JDateChooser field = new JDateChooser();
 
@@ -383,6 +445,12 @@ public abstract class View extends JFrame {
 
     // Constrói Botão
     public JPanel botao(int x, int y, String titulo) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+        
         // Determina o tamanho do texto
         Font font = new Font("Roboto", Font.BOLD, 16);
         FontRenderContext frc = new FontRenderContext(null, true, true);
@@ -420,6 +488,12 @@ public abstract class View extends JFrame {
 
     // Constrói Botão do Menu
     public JPanel botaoMenu(int x, int y, String titulo, String imgLink) {
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+        
         Font font = new Font("Roboto", Font.BOLD, 16);
 
         // Forma

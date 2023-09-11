@@ -32,5 +32,12 @@ public class ReservaDao {
         return em.createQuery(jpql, Reserva.class)
                 .getResultList();
     }
+
+    public Reserva buscarPorNumeroDaReserva(Long id) {
+        String jpql = "SELECT r FROM Reserva r WHERE r.id = ?1";
+        return em.createQuery(jpql, Reserva.class)
+                .setParameter(1, id)
+                .getSingleResult();
+    }
     
 }

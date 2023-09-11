@@ -5,34 +5,43 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableModel;
 
-import main.java.br.com.alura.hotel.util.ColorList;
+import keeptoo.KGradientPanel;
+import main.java.br.com.alura.hotel.dao.HospedeDao;
+import main.java.br.com.alura.hotel.dao.ReservaDao;
+import main.java.br.com.alura.hotel.dao.UsuarioDao;
+import main.java.br.com.alura.hotel.modelo.Hospede;
+import main.java.br.com.alura.hotel.modelo.Reserva;
+import main.java.br.com.alura.hotel.modelo.Usuario;
+import main.java.br.com.alura.hotel.util.CustomFonts;
+import main.java.br.com.alura.hotel.util.JPAUtil;
 import main.java.br.com.alura.hotel.util.View;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.persistence.EntityManager;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
-import java.awt.SystemColor;
-
+import java.awt.FontFormatException;
+import java.awt.Insets;
+import java.awt.Panel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.plaf.ColorUIResource;
 import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.List;
 
 public class Buscar extends View {
 
-	private final int WIDTH = 910;
-	private final int HEIGHT = 571;
+	private final int WIDTH = 944; // 910
+	private final int HEIGHT = 609; // 571
+
 
 	private JPanel contentPane;
 	private JPanel header;
-
-	private JTable tbHospedes;
-	private JTable tbReservas;
-	private DefaultTableModel modelo;
-	private DefaultTableModel modeloHospedes;
 
 	/**
 	 * Launch the application.
@@ -56,6 +65,18 @@ public class Buscar extends View {
 	 */
 
 	public Buscar() {
+		
+        try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
+		/**
+		 * 
+		 * ELEMENTOS
+		 * 
+		 */
 
 		// Constrói a Janela
 		contentPane = window(WIDTH, HEIGHT);
@@ -64,185 +85,204 @@ public class Buscar extends View {
 		header = header(WIDTH, true, new MenuUsuario(), true);
 		contentPane.add(header);
 
+		// Footer
+		JPanel footer = footer(HEIGHT, WIDTH, true);
+		contentPane.add(footer);
+
+		// Fundo Gradiente
+		KGradientPanel bg = quadroGradiente(0, 36, WIDTH, HEIGHT - 72);
+		contentPane.add(bg);
+
+		// Quadro branco
+		Panel quadro = quadroSolido(26, 478, 893, 59, Color.WHITE);
+		bg.add(quadro);
+
+		// Título
+		bg.add(labelTitulo(150, 20+25, 162, 26, "SISTEMA"));
+		bg.add(labelTitulo(150, 20+25+36, 188, 26, "DE BUSCA"));
+
+		// IMG - LOGO HOTEL
+		JLabel logo = new JLabel("");
+		logo.setBounds(25, 25, 100, 100);
+		logo.setIcon(new ImageIcon(RegistroReserva.class.getResource("/main/java/br/com/alura/hotel/res/aH-100px.png")));
+		bg.add(logo);
+
+		// Quadro de Resultados
+		UIManager.put("TabbedPane.selected", Color.DARK_GRAY);
+		UIManager.put("TabbedPane.contentBorderInsets", new Insets(0, 0, 0, 0));
+		UIManager.put("TabbedPane.borderHightlightColor", new ColorUIResource( Color.DARK_GRAY ));
+		UIManager.put("TabbedPane.darkShadow", new ColorUIResource( Color.DARK_GRAY ));
+
+		JTabbedPane quadroReultados = new JTabbedPane(JTabbedPane.TOP);
+		quadroReultados.setBackground(Color.GRAY);
+		quadroReultados.setForeground(Color.WHITE);
+		quadroReultados.setFont(new Font("Roboto", Font.PLAIN, 16));
+		quadroReultados.setBounds(25, 150, WIDTH-50, 328);
+		bg.add(quadroReultados);
+
+		// Campo Buscar
+		JTextField txtBuscar = campoTxt(25, 14, 200, 31, true);
+		quadro.add(txtBuscar);
+
+		// Botão "BUSCAR"
+		JPanel btnBuscar = botao(250, 9, "BUSCAR");
+		quadro.add(btnBuscar);
+
+		// Botão "EDITAR"
+		JPanel btnEditar = botao(617, 9, "EDITAR");
+		quadro.add(btnEditar);
+
+		// Botão "DELETAR"
+		JPanel btnDeletar = botao(748, 9, "DELETAR");
+		quadro.add(btnDeletar);
+
 		/**
+		 * 
+		 * ABAS
 		 * 
 		 */
 
-		// Logo
-
-		JLabel lblNewLabel_2 = new JLabel("");
-		lblNewLabel_2
-				.setIcon(new ImageIcon(Buscar.class.getResource("/main/java/br/com/alura/hotel/res/aH-100px.png")));
-		lblNewLabel_2.setBounds(56, 51, 104, 107);
-		contentPane.add(lblNewLabel_2);
-
-		// Título da janela
-
-		JLabel lblTitulo = new JLabel("SISTEMA DE BUSCA");
-		lblTitulo.setForeground(new Color(12, 138, 199));
-		lblTitulo.setFont(new Font("Roboto Black", Font.BOLD, 24));
-		lblTitulo.setBounds(331, 62, 280, 42);
-		contentPane.add(lblTitulo);
-
-		// Campo Buscar
-
-		JTextField txtBuscar = campoTxt(539, 127, 193, 31, true);
-		contentPane.add(txtBuscar);
-
-		// Separador - Campo Buscar
-
-		contentPane.add(line(539, 159, 193, 2, ColorList.AZUL));
-
-		// Botão Buscar
-
-		JPanel btnbuscar = new JPanel();
-		btnbuscar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnbuscar.setBackground(new Color(0, 156, 223));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnbuscar.setBackground(SystemColor.textHighlight);
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-
-			}
-		});
-		btnbuscar.setLayout(null);
-		btnbuscar.setBackground(new Color(12, 138, 199));
-		btnbuscar.setBounds(748, 125, 122, 35);
-		btnbuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-		contentPane.add(btnbuscar);
-
-		// Label Botão Buscar
-
-		JLabel lblBuscar = new JLabel("BUSCAR");
-		lblBuscar.setBounds(0, 0, 122, 35);
-		btnbuscar.add(lblBuscar);
-		lblBuscar.setHorizontalAlignment(SwingConstants.CENTER);
-		lblBuscar.setForeground(Color.WHITE);
-		lblBuscar.setFont(new Font("Roboto", Font.PLAIN, 18));
-
-		// Quadro de Resultados
-
-		JTabbedPane panel = new JTabbedPane(JTabbedPane.TOP);
-		panel.setBackground(new Color(12, 138, 199));
-		panel.setFont(new Font("Roboto", Font.PLAIN, 16));
-		panel.setBounds(20, 169, 865, 328);
-		contentPane.add(panel);
-
-		// Aba Reservas
-
-		tbReservas = new JTable();
+		// Aba RESERVAS
+		JTable tbReservas = new JTable();
 		tbReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		tbReservas.setFont(new Font("Roboto", Font.PLAIN, 16));
-		modelo = (DefaultTableModel) tbReservas.getModel();
-		modelo.addColumn("Numero de Reserva");
-		modelo.addColumn("Data Check In");
-		modelo.addColumn("Data Check Out");
-		modelo.addColumn("Valor");
-		modelo.addColumn("Forma de Pago");
-		JScrollPane scroll_table = new JScrollPane(tbReservas);
-		panel.addTab("Reservas",
-				new ImageIcon(Buscar.class.getResource("/main/java/br/com/alura/hotel/res/reservado.png")),
-				scroll_table, null);
-		scroll_table.setVisible(true);
+		tbReservas.setFont(new Font("Roboto", Font.PLAIN, 14));
+		
+		JScrollPane scroll_tableReservas = new JScrollPane(tbReservas);
+		quadroReultados.addTab("Reservas", new ImageIcon(Buscar.class.getResource("/main/java/br/com/alura/hotel/res/icon-buscar-booking.png")), scroll_tableReservas, null);
+		scroll_tableReservas.setVisible(true);
 
-		// Aba Hóspedes
+		DefaultTableModel modeloReservas = (DefaultTableModel) tbReservas.getModel();
+		modeloReservas.addColumn("Número da Reserva");
+		modeloReservas.addColumn("Data Check In");
+		modeloReservas.addColumn("Data Check Out");
+		modeloReservas.addColumn("Valor");
+		modeloReservas.addColumn("Forma de Pagamento");
 
-		tbHospedes = new JTable();
+		// Aba HÓSPEDES
+		JTable tbHospedes = new JTable();
 		tbHospedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		tbHospedes.setFont(new Font("Roboto", Font.PLAIN, 16));
-		modeloHospedes = (DefaultTableModel) tbHospedes.getModel();
-		modeloHospedes.addColumn("Numero de Hóspede");
+		tbHospedes.setFont(new Font("Roboto", Font.PLAIN, 14));
+		
+		JScrollPane scroll_tableHospedes = new JScrollPane(tbHospedes);
+		quadroReultados.addTab("Hóspedes", new ImageIcon(Buscar.class.getResource("/main/java/br/com/alura/hotel/res/icon-buscar-guest.png")), scroll_tableHospedes, null);
+		scroll_tableHospedes.setVisible(true);
+		
+		DefaultTableModel modeloHospedes = (DefaultTableModel) tbHospedes.getModel();
+		modeloHospedes.addColumn("ID do Hóspede");
 		modeloHospedes.addColumn("Nome");
 		modeloHospedes.addColumn("Sobrenome");
 		modeloHospedes.addColumn("Data de Nascimento");
 		modeloHospedes.addColumn("Nacionalidade");
 		modeloHospedes.addColumn("Telefone");
-		modeloHospedes.addColumn("Numero de Reserva");
-		JScrollPane scroll_tableHuespedes = new JScrollPane(tbHospedes);
-		panel.addTab("Hóspedes",
-				new ImageIcon(Buscar.class.getResource("/main/java/br/com/alura/hotel/res/pessoas.png")),
-				scroll_tableHuespedes, null);
-		scroll_tableHuespedes.setVisible(true);
+		modeloHospedes.addColumn("Número da Reserva");
 
-		// Botão Editar
+		// Aba USUÁRIOS
+		JTable tbUsers = new JTable();
+		tbUsers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tbUsers.setFont(new Font("Roboto", Font.PLAIN, 14));
+		
+		JScrollPane scroll_tableUser = new JScrollPane(tbUsers);
+		quadroReultados.addTab("Usuários", new ImageIcon(Buscar.class.getResource("/main/java/br/com/alura/hotel/res/icon-buscar-user.png")), scroll_tableUser, null);
+		scroll_tableUser.setVisible(true);
+		
+		DefaultTableModel modeloUsers = (DefaultTableModel) tbUsers.getModel();
+		modeloUsers.addColumn("ID");
+		modeloUsers.addColumn("Login");
+		modeloUsers.addColumn("Senha");
+		modeloUsers.addColumn("Nome");
+		modeloUsers.addColumn("Sobrenome");
+		modeloUsers.addColumn("E-mail");
+		modeloUsers.addColumn("Data de cadastro");
+		modeloUsers.addColumn("Último acesso");
 
-		JPanel btnEditar = new JPanel();
-		btnEditar.setLayout(null);
-		btnEditar.setBackground(new Color(12, 138, 199));
-		btnEditar.setBounds(635, 508, 122, 35);
-		btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		/**
+		 * 
+		 * BANCO DE DADOS
+		 * 
+		 */
 
+		EntityManager em = JPAUtil.getEntityManager();
+
+		HospedeDao hospedeDao = new HospedeDao(em);
+		List<Hospede> todosHospedes = hospedeDao.buscarTodos();
+
+		ReservaDao reservaDao = new ReservaDao(em);
+		List<Reserva> todasReservas = reservaDao.buscarTodos();
+
+		UsuarioDao usuarioDao = new UsuarioDao(em);
+		List<Usuario> todosUsuarios = usuarioDao.buscarTodos();
+
+		/**
+		 * 
+		 * LÓGICA
+		 * 
+		 */
+
+		// Lógica Aba RESERVAS
+		for (Reserva reserva : todasReservas) {
+			Object[] linha = {
+				reserva.getId(),
+				reserva.getDataSaida(),
+				reserva.getDataSaida(),
+				reserva.getValor(),
+				reserva.getFormaPagamento().getPagamento()
+			};
+			modeloReservas.addRow(linha);
+		}
+		
+		// Lógica Aba HÓSPEDES
+		for (Hospede hospede : todosHospedes) {
+			Object[] linha = {
+				hospede.getId(),
+				hospede.getNome(),
+				hospede.getSobrenome(),
+				hospede.getDataNascimento(),
+				hospede.getNacionalidade(),
+				hospede.getTelefone(),
+				hospede.getReserva().getId()
+			};
+			modeloHospedes.addRow(linha);
+		}
+		
+		// Lógica Aba USUÁRIOS
+		for (Usuario usuario : todosUsuarios) {
+			Object[] linha = {
+				usuario.getId(),
+				usuario.getLogin(),
+				usuario.getSenha().replaceAll(".", "*"),
+				usuario.getNome(),
+				usuario.getSobrenome(),
+				usuario.getEmail(),
+				usuario.getDataEHoraDoCadastro(),
+				usuario.getUltimoAcesso()
+			};
+			modeloUsers.addRow(linha);
+		}
+
+		// Lógica Botão "BUSCAR"
+		btnBuscar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+			}
+		});
+
+		// Lógica Botão "EDITAR"
 		btnEditar.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnEditar.setBackground(new Color(0, 156, 223));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnEditar.setBackground(SystemColor.textHighlight);
-			}
-
-			@Override
 			public void mouseClicked(MouseEvent e) {
 
 			}
 		});
 
-		contentPane.add(btnEditar);
-
-		// Label Botão Editar
-
-		JLabel lblEditar = new JLabel("EDITAR");
-		lblEditar.setHorizontalAlignment(SwingConstants.CENTER);
-		lblEditar.setForeground(Color.WHITE);
-		lblEditar.setFont(new Font("Roboto", Font.PLAIN, 18));
-		lblEditar.setBounds(0, 0, 122, 35);
-		btnEditar.add(lblEditar);
-
-		// Botão Deletar
-
-		JPanel btnDeletar = new JPanel();
-		btnDeletar.setLayout(null);
-		btnDeletar.setBackground(new Color(12, 138, 199));
-		btnDeletar.setBounds(767, 508, 122, 35);
-		btnDeletar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-
+		// Lógica Botão "DELETAR"
 		btnDeletar.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseEntered(MouseEvent e) {
-				btnDeletar.setBackground(new Color(0, 156, 223));
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				btnDeletar.setBackground(SystemColor.textHighlight);
-			}
-
-			@Override
 			public void mouseClicked(MouseEvent e) {
 
 			}
 		});
 
-		contentPane.add(btnDeletar);
-
-		// Label Botão Deletar
-
-		JLabel lblExcluir = new JLabel("DELETAR");
-		lblExcluir.setHorizontalAlignment(SwingConstants.CENTER);
-		lblExcluir.setForeground(Color.WHITE);
-		lblExcluir.setFont(new Font("Roboto", Font.PLAIN, 18));
-		lblExcluir.setBounds(0, 0, 122, 35);
-		btnDeletar.add(lblExcluir);
-		setResizable(false);
 	}
 
 }

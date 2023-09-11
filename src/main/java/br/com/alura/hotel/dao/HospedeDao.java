@@ -33,6 +33,13 @@ public class HospedeDao {
                 .getResultList();
     }
 
+    public List<Hospede> buscarPorNome(String nome) {
+        String jpql = "SELECT h FROM Hospede h WHERE h.nome = ?1";
+        return em.createQuery(jpql, Hospede.class)
+                .setParameter(1, nome)
+                .getResultList();
+    }
+
     public List<Hospede> buscarPorSobrenome(String sobrenome) {
         String jpql = "SELECT h FROM Hospede h WHERE h.sobrenome = ?1";
         return em.createQuery(jpql, Hospede.class)

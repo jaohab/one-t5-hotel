@@ -25,8 +25,6 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
-import java.text.ParseException;
-
 import javax.swing.JComboBox;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -116,7 +114,8 @@ public class RegistroReserva extends View {
 		quadro.add(txtDataE);
 			// Borda
 		JTextField bordaCheckIn = campoTxt(50, 80, WIDTH / 2 - 142, 40, false);
-		bordaCheckIn.setBackground(Color.WHITE);
+		//bordaCheckIn.setBackground(Color.WHITE);
+		bordaCheckIn.setOpaque(false);
 		quadro.add(bordaCheckIn);
 
 		// Label Campo Check-Out
@@ -128,7 +127,8 @@ public class RegistroReserva extends View {
 		quadro.add(txtDataS);
 			// Borda
 		JTextField bordaCheckOut = campoTxt(50, 180, WIDTH / 2 - 142, 40, false);
-		bordaCheckOut.setBackground(Color.WHITE);
+		//bordaCheckOut.setBackground(Color.WHITE);
+		bordaCheckOut.setOpaque(false);
 		quadro.add(bordaCheckOut);
 
 		// Label Campo Valor da Reserva
@@ -154,7 +154,7 @@ public class RegistroReserva extends View {
 		quadro.add(txtFormaPagamento);
 			// Borda
 		JTextField bordaPagamento = campoTxt(50, yFP, WIDTH / 2 - 100, 40, false);
-		bordaPagamento.setBackground(Color.WHITE);
+		bordaPagamento.setOpaque(false);
 		quadro.add(bordaPagamento);
 
 		// Botão "PRÓXIMO"
@@ -162,7 +162,7 @@ public class RegistroReserva extends View {
 		quadro.add(btnProximo);
 
 		// Botão "CANCELAR"
-		JPanel btnCancelar = botao(291, 450, "CANCELAR");
+		JPanel btnCancelar = botao(291 - 3, 450, "CANCELAR");
 		quadro.add(btnCancelar);
 
 		/**
@@ -234,23 +234,15 @@ public class RegistroReserva extends View {
 							listaPagamento.get(txtFormaPagamento.getSelectedIndex()));
 
 					// Adiciona ao Banco de dados pra gerar uma ID
-					// em.getTransaction().begin();
-					// reservaDao.cadastrar(reserva);
-					// System.out.println(reserva.toString());
-					// em.getTransaction().commit();
-					// em.close();
+					em.getTransaction().begin();
+					reservaDao.cadastrar(reserva);
+					em.getTransaction().commit();
+					em.close();
 
 					// Passa para próxima janela, cadastrar o hóspede
-					RegistroHospede hospede;
-					try {
-						hospede = new RegistroHospede();
-						// hospede.setReservaId(reserva.getId());
-						hospede.setReservaId(9753l); // TEMPORARIO
-						hospede.setVisible(true);
-						dispose();
-					} catch (ParseException e1) {
-						e1.printStackTrace();
-					}
+					RegistroHospede hospede = new RegistroHospede(reserva.getId());
+					hospede.setVisible(true);
+					dispose();
 
 				} else {
 					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.");
@@ -262,8 +254,7 @@ public class RegistroReserva extends View {
 		btnCancelar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				MenuUsuario menu = new MenuUsuario();
-				menu.setVisible(true);
+				new MenuUsuario().setVisible(true);
 				dispose();
 			}
 		});

@@ -111,7 +111,7 @@ public class Login extends View {
 
 		// Botão "NOVO USUÁRIO"
 
-		JPanel btnNovoUser = botao(160, 250, "NOVO USUÁRIO");
+		JPanel btnNovoUser = botao(160 - 3, 250, "NOVO USUÁRIO");
 		quadro.add(btnNovoUser);
 
 		/**
@@ -209,6 +209,7 @@ public class Login extends View {
 						// Atualiza a data de Último Acesso
 						em.getTransaction().begin();
 						user.setUltimoAcesso(new Date());
+						usuarioDao.atualizar(user);
 						em.getTransaction().commit();
         				em.close();
 

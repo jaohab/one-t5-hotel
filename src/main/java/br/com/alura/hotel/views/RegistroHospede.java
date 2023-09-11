@@ -11,6 +11,9 @@ import keeptoo.KGradientPanel;
 import main.java.br.com.alura.hotel.dao.HospedeDao;
 import main.java.br.com.alura.hotel.dao.ReservaDao;
 import main.java.br.com.alura.hotel.lists.NacionalidadeEnum;
+import main.java.br.com.alura.hotel.modelo.Hospede;
+import main.java.br.com.alura.hotel.util.ColorList;
+import main.java.br.com.alura.hotel.util.CustomFonts;
 import main.java.br.com.alura.hotel.util.JPAUtil;
 import main.java.br.com.alura.hotel.util.View;
 
@@ -21,12 +24,16 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Panel;
 
 import javax.swing.ImageIcon;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.text.ParseException;
+import java.time.ZoneId;
+
 import javax.swing.SwingConstants;
 
 public class RegistroHospede extends View {
@@ -44,7 +51,7 @@ public class RegistroHospede extends View {
 	private JFormattedTextField txtTelefone;
 	private JTextField txtNumReserva;
 
-	private Long reservaId = 7865465L;
+	private Long reservaId;
 
 	/**
 	 * Launch the application.
@@ -54,7 +61,7 @@ public class RegistroHospede extends View {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistroHospede frame = new RegistroHospede();
+					RegistroHospede frame = new RegistroHospede(0l);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -67,7 +74,8 @@ public class RegistroHospede extends View {
 	 * Create the frame.
 	 */
 
-	public RegistroHospede() throws ParseException {
+	public RegistroHospede(Long reservaId) {
+		this. reservaId = reservaId;
 
 		/**
 		 * 
@@ -129,7 +137,7 @@ public class RegistroHospede extends View {
 		quadro.add(txtDataN);
 			// Borda
 		JTextField bordaDataN = campoTxt(50, yDN, WIDTH / 2 - 142, 40, false);
-		bordaDataN.setBackground(Color.WHITE);
+		bordaDataN.setOpaque(false);
 		quadro.add(bordaDataN);
 
 		// Label Campo Nacionalidade
@@ -147,14 +155,18 @@ public class RegistroHospede extends View {
 		quadro.add(txtNacionalidade);
 			// Borda
 		JTextField bordaNacionalidade = campoTxt(50, yNa, WIDTH / 2 - 100, 40, false);
-		bordaNacionalidade.setBackground(Color.WHITE);
+		bordaNacionalidade.setOpaque(false);
 		quadro.add(bordaNacionalidade);		
 
 		// Label Campo Telefone
 		quadro.add(label(50, 310, 324, 26, Color.GRAY, "TELEFONE"));
 
 		// Campo Telefone
-		txtTelefone = campoTelefone(50, 335, WIDTH / 2 - 100, 40, true);
+		try {
+			txtTelefone = campoTelefone(50, 335, WIDTH / 2 - 100, 40, true);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		quadro.add(txtTelefone);
 
 		// Label Campo Nº da Reserva
@@ -170,7 +182,7 @@ public class RegistroHospede extends View {
 		quadro.add(btnCadastrar);
 
 		// Botão "CANCELAR"
-		JPanel btnCancelar = botao(291, 480, "CANCELAR");
+		JPanel btnCancelar = botao(291 - 3, 480, "CANCELAR");
 		quadro.add(btnCancelar);
 
 		/**
@@ -183,8 +195,6 @@ public class RegistroHospede extends View {
 		HospedeDao hospedeDao = new HospedeDao(em);
 		ReservaDao reservaDao = new ReservaDao(em);
 
-		// em.getTransaction().begin();
-
 		/**
 		 * 
 		 * LÓGICA
@@ -192,6 +202,12 @@ public class RegistroHospede extends View {
 		 */
 
 		// Botão Voltar "<" com função de remoção de registro de reserva
+		try {
+            CustomFonts.registrarFont(CustomFonts.chamarFont("Roboto-Regular"));
+        } catch (FontFormatException | IOException e) {
+            e.printStackTrace();
+        }
+
 		JLabel labelAtras = new JLabel("<");
 		labelAtras.setHorizontalAlignment(SwingConstants.CENTER);
 		labelAtras.setFont(new Font("Roboto", Font.PLAIN, 23));
@@ -201,15 +217,17 @@ public class RegistroHospede extends View {
 		btnAtras.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// reservaDao.remover(reserva);
-				// em.flush();
+				em.getTransaction().begin();
+				reservaDao.remover(reservaDao.buscarPorNumeroDaReserva(reservaId));
+				em.getTransaction().commit();
+				em.close();
 				new RegistroReserva().setVisible(true);
 				dispose();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				btnAtras.setBackground(new Color(12, 138, 199));
+				btnAtras.setBackground(ColorList.G_START_COLOR);
 			}
 
 			@Override
@@ -235,8 +253,10 @@ public class RegistroHospede extends View {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int res = JOptionPane.showConfirmDialog(null, "Tem certeza que quer fechar o programa?", "ATENÇÃO", 0);
-				// reservaDao.remover(reserva);
-				// em.flush();
+				em.getTransaction().begin();
+				reservaDao.remover(reservaDao.buscarPorNumeroDaReserva(reservaId));
+				em.getTransaction().commit();
+				em.close();
 				if (res == 0)
 					System.exit(0);
 			}
@@ -269,40 +289,44 @@ public class RegistroHospede extends View {
 		txtNacionalidade.setSelectedIndex(0);
 
 		// Lógica Campo Nª da Reserva
-		txtNumReserva.setText(reservaId.toString());
+		txtNumReserva.setText(getReservaId().toString());
 
 		// Lógica Botão "CADASTRAR"
 		btnCadastrar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// if (!txtNome.getText().isEmpty() &&
-				// 		!txtSobrenome.getText().isEmpty() &&
-				// 		txtDataN.getDate() != null &&
-				// 		!telefoneField.getText().equals("(   )       -    ")) {
+				if (!txtNome.getText().isEmpty() &&
+						!txtSobrenome.getText().isEmpty() &&
+						txtDataN.getDate() != null &&
+						!txtTelefone.getText().equals("(   )       -    ")) {
 
 				// 	// System.out.println("nome: " + txtNome.getText());
 				// 	// System.out.println("sobrenome: " + txtSobrenome.getText());
 				// 	// System.out.println("data nascimento" +
 				// 	// txtDataN.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
 				// 	// System.out.println("nacionalidade: " + txtNacionalidade.getName());
-				// 	// System.out.println("telefone: " + telefoneField.getText());
+				// 	// System.out.println("telefone: " + txtTelefone.getText());
 				// 	// System.out.println(reserva.toString());
 
-				// 	Hospede hospede = new Hospede(txtNome.getText(),
-				// 			txtSobrenome.getText(),
-				// 			txtDataN.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-				// 			txtNacionalidade.getName(),
-				// 			telefoneField.getText(),
-				// 			reserva);
-				// 	hospedeDao.atualizar(hospede);
+					Hospede hospede = new Hospede(txtNome.getText(),
+							txtSobrenome.getText(),
+							txtDataN.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+							txtNacionalidade.getName(),
+							txtTelefone.getText(),
+							reservaDao.buscarPorNumeroDaReserva(reservaId));
+					
+							em.getTransaction().begin();
+					hospedeDao.atualizar(hospede);
+					em.getTransaction().commit();
+					em.close();
 
-				// 	Sucesso sucesso = new Sucesso();
-				// 	sucesso.setVisible(true);
-				// 	dispose();
+					Sucesso sucesso = new Sucesso();
+					sucesso.setVisible(true);
+					dispose();
 
-				// } else {
-				// 	JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.");
-				// }
+				} else {
+					JOptionPane.showMessageDialog(null, "Deve preencher todos os campos.");
+				}
 			}
 		});
 
@@ -310,7 +334,12 @@ public class RegistroHospede extends View {
 		btnCancelar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				em.getTransaction().begin();
+				reservaDao.remover(reservaDao.buscarPorNumeroDaReserva(reservaId));
+				em.getTransaction().commit();
+				em.close();
+				new MenuUsuario().setVisible(true);
+				//dispose();
 			}
 		});
 
@@ -318,6 +347,10 @@ public class RegistroHospede extends View {
 
 	public void setReservaId(Long reservaId) {
 		this.reservaId = reservaId;
+	}
+
+	public Long getReservaId() {
+		return reservaId;
 	}
 
 }
