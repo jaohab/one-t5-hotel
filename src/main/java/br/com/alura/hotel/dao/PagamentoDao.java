@@ -32,5 +32,12 @@ public class PagamentoDao {
         return em.createQuery(jpql, Pagamento.class)
                 .getResultList();
     }
+
+    public Pagamento buscarPorPagamento(String pagamento) {
+        String jpql = "SELECT p FROM Pagamento p WHERE p.pagamento = ?1";
+        return em.createQuery(jpql, Pagamento.class)
+                .setParameter(1, pagamento)
+                .getSingleResult();
+    }
     
 }

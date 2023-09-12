@@ -46,7 +46,7 @@ public class RegistroReserva extends View {
 	public static JComboBox<String> txtFormaPagamento;
 
 	private String valor;
-	private final int DIARIA = 79;
+	public final static int DIARIA = 79;
 
 	/**
 	 * Launch the application.
@@ -261,10 +261,10 @@ public class RegistroReserva extends View {
 
 	}
 
-	private String CalcularDiaria(JDateChooser CheckIn, JDateChooser CheckOut) throws Exception {
+	private String CalcularDiaria(JDateChooser checkIn, JDateChooser checkOut) throws Exception {
 
-		LocalDate d1 = CheckIn.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		LocalDate d2 = CheckOut.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate d1 = checkIn.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate d2 = checkOut.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
 		Validacao(d1, d2);
 
@@ -274,23 +274,23 @@ public class RegistroReserva extends View {
 		return valor.toString();
 	}
 
-	private void Validacao(LocalDate CheckIn, LocalDate CheckOut) throws Exception {
+	private void Validacao(LocalDate checkIn, LocalDate checkOut) throws Exception {
 
 		// As datas do Check-in precisa ser posterior a data de hoje
-		if (CheckIn.isBefore(LocalDate.now())) {
+		if (checkIn.isBefore(LocalDate.now())) {
 			txtValor.setText("");
 			JOptionPane.showMessageDialog(null, "A data do Check-in precisa ser posterior a data de hoje.");
 			throw new Exception("A data do Check-in precisa ser posterior a data de hoje.", null);
 		}
 		// As datas do Check-out precisa ser posterior a data de hoje
-		if (CheckOut.isBefore(LocalDate.now())) {
+		if (checkOut.isBefore(LocalDate.now())) {
 			txtValor.setText("");
 			JOptionPane.showMessageDialog(null, "A data do Check-out precisa ser posterior a data de hoje.");
 			throw new Exception("A data do Check-out precisa ser posterior a data de hoje.", null);
 		}
 
 		// A data do Check-out deve ser posterior a data do Check-in
-		if (CheckOut.isBefore(CheckIn)) {
+		if (checkOut.isBefore(checkIn)) {
 			txtValor.setText("");
 			JOptionPane.showMessageDialog(null, "A data do Check-out precisa ser posterior a data do Check-in.");
 			throw new Exception("A data do Check-out precisa ser posterior a data do Check-in.", null);

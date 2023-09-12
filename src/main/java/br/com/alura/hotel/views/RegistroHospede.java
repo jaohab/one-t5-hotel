@@ -300,18 +300,10 @@ public class RegistroHospede extends View {
 						txtDataN.getDate() != null &&
 						!txtTelefone.getText().equals("(   )       -    ")) {
 
-				// 	// System.out.println("nome: " + txtNome.getText());
-				// 	// System.out.println("sobrenome: " + txtSobrenome.getText());
-				// 	// System.out.println("data nascimento" +
-				// 	// txtDataN.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-				// 	// System.out.println("nacionalidade: " + txtNacionalidade.getName());
-				// 	// System.out.println("telefone: " + txtTelefone.getText());
-				// 	// System.out.println(reserva.toString());
-
 					Hospede hospede = new Hospede(txtNome.getText(),
 							txtSobrenome.getText(),
 							txtDataN.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-							txtNacionalidade.getName(),
+							txtNacionalidade.getSelectedItem().toString(),
 							txtTelefone.getText(),
 							reservaDao.buscarPorNumeroDaReserva(reservaId));
 					

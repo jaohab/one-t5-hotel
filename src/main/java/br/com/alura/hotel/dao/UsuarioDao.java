@@ -32,5 +32,13 @@ public class UsuarioDao {
         return em.createQuery(jpql, Usuario.class)
                 .getResultList();
     }
+
+    public Usuario buscarPorId(Long id) {
+        String jpql = "SELECT u FROM Usuario u WHERE u.id = ?1";
+        return em.createQuery(jpql, Usuario.class)
+                .setParameter(1, id)
+                .getSingleResult();
+    }
+    
     
 }

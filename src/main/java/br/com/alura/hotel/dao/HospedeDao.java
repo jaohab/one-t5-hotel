@@ -47,6 +47,13 @@ public class HospedeDao {
                 .getResultList();
     }
 
+    public Hospede buscarPorId(Long id) {
+        String jpql = "SELECT h FROM Hospede h WHERE h.id = ?1";
+        return em.createQuery(jpql, Hospede.class)
+                .setParameter(1, id)
+                .getSingleResult();
+    }
+
     public Hospede buscarPorNumeroDaReserva(Long id) {
         String jpql = "SELECT h FROM Hospede h WHERE h.reserva.id = ?1";
         return em.createQuery(jpql, Hospede.class)
