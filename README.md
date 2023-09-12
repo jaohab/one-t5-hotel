@@ -59,3 +59,7 @@ Com base na interface gráfica disponibilizada, desenvolvi uma nova inferface, a
 > * 7 - Tela de busca de todos os registros do sistema
 
 ![Tela - menu](telas/07_search.png)
+
+***
+
+![Badge](telas/cms_files_10224_1677509014Prancheta_1.png)
