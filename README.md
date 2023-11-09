@@ -1,4 +1,4 @@
-# Hotel Alura - Challenge ONE - Alura
+# ONE - Oracle Next Education - Challenge ONE - Hotel Alura - Alura
 
 Repositório do desafio proposto pela ONE (Oracle Next Education) | Alura de desenvolver um sistema de gerencimaneto de reservas e hóspedes de um hotel.  
 
